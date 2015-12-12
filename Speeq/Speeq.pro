@@ -42,7 +42,8 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui
 
 DISTFILES += \
-    Speeq.rc
+    Speeq.rc \
+    ../README.md
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../libspeex/release/ -lspeex
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../libspeex/debug/ -lspeex
