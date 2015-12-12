@@ -1,1 +1,8 @@
 *.pro.user
+*.log
+*.o
+moc_*.cpp
+*.qm
+*.moc
+.DS_Store
+Makefile*
