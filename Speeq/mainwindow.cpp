@@ -107,6 +107,10 @@ MainWindow::MainWindow(QWidget *parent)
   ui->graphLayout->addWidget(d->waveRenderArea);
   ui->graphLayout->addWidget(d->volumeRenderArea);
   ui->statusBar->showMessage(d->audioDeviceInfo.deviceName());
+  foreach (QAudioDeviceInfo adi, QAudioDeviceInfo::availableDevices(QAudio::AudioInput)) {
+    ui->audioInputComboBox->addItem(adi.deviceName());
+  }
+
   restoreSettings();
   d->audioInput->start();
   d->audio->start(d->audioInput);

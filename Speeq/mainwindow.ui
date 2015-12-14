@@ -15,6 +15,42 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <layout class="QVBoxLayout" name="graphLayout"/>
+    </item>
+    <item row="0" column="1" rowspan="4">
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QSlider" name="volumeSlider">
+        <property name="toolTip">
+         <string>volume </string>
+        </property>
+        <property name="maximum">
+         <number>100</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="tickPosition">
+         <enum>QSlider::NoTicks</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
     <item row="1" column="0">
      <layout class="QHBoxLayout" name="horizontalLayout">
       <property name="topMargin">
@@ -38,7 +74,7 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="speeq.qrc">
+         <iconset>
           <normaloff>:/images/resources/images/right-32.png</normaloff>:/images/resources/images/right-32.png</iconset>
         </property>
         <property name="iconSize">
@@ -77,40 +113,7 @@
       </item>
      </layout>
     </item>
-    <item row="0" column="1" rowspan="3">
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <widget class="QSlider" name="volumeSlider">
-        <property name="toolTip">
-         <string>volume </string>
-        </property>
-        <property name="maximum">
-         <number>100</number>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="tickPosition">
-         <enum>QSlider::NoTicks</enum>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="verticalSpacer">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-     </layout>
-    </item>
-    <item row="2" column="0">
+    <item row="3" column="0">
      <widget class="QPlainTextEdit" name="logPlainTextEdit">
       <property name="font">
        <font>
@@ -119,8 +122,8 @@
       </property>
      </widget>
     </item>
-    <item row="0" column="0">
-     <layout class="QVBoxLayout" name="graphLayout"/>
+    <item row="2" column="0">
+     <widget class="QComboBox" name="audioInputComboBox"/>
     </item>
    </layout>
   </widget>
@@ -145,8 +148,6 @@
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources>
-  <include location="speeq.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>
