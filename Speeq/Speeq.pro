@@ -30,14 +30,16 @@ SOURCES += main.cpp\
     util.cpp \
     volumerenderarea.cpp \
     waverenderarea.cpp \
-    audioencoder.cpp
+    audioencoder.cpp \
+    tcpclient.cpp
 
 HEADERS  += mainwindow.h \
     global.h \
     util.h \
     volumerenderarea.h \
     waverenderarea.h \
-    audioencoder.h
+    audioencoder.h \
+    tcpclient.h
 
 FORMS    += mainwindow.ui
 
