@@ -82,15 +82,14 @@ public:
   int output_rate;
   spx_int32_t lookahead;
   spx_int32_t bitrate;
-  QString speexVersion;
+  const char* speex_version;
 
 private:
   void init_speex(void)
   {
-    const char* speex_version;
+
     speex_lib_ctl(SPEEX_LIB_GET_VERSION_STRING, (void*)&speex_version);
-    speexVersion = QString::fromLatin1(speex_version);
-    qDebug() << speexVersion;
+    qDebug() << speex_version;
     nb_samples = 0;
     total_samples = 0;
     nb_encoded = 0;
