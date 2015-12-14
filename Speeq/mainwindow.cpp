@@ -86,9 +86,6 @@ public:
 };
 
 
-static const int MaxRandomBufferSize = 20000 / 8;
-
-
 MainWindow::MainWindow(QWidget *parent)
   : QMainWindow(parent)
   , ui(new Ui::MainWindow)
