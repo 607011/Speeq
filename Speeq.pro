@@ -19,8 +19,8 @@ VERSION = -$${SPEEQ_VERSION}
 TEMPLATE = subdirs
 CONFIG += ordered
 SUBDIRS += \
-    Speeq \ 
-    libspeex
+    libspeex \
+    Speeq
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/libspeex/release/ -lspeex
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/libspeex/debug/ -lspeex
