@@ -32,9 +32,8 @@ static const int MAX_FRAME_BYTES = 2000;
 
 class AudioDecoderPrivate {
 public:
-  AudioDecoderPrivate(const QAudioFormat &format, QMutex *mutex)
-    : format(format)
-    , level(0.0)
+  AudioDecoderPrivate(QMutex *mutex)
+    : level(0.0)
     , sampleBufferMutex(mutex)
   {
     init_speex();
@@ -43,11 +42,9 @@ public:
   {
     deinit_speex();
   }
-  const QAudioFormat format;
   qreal level;
   SampleBufferType sampleBuffer;
   QMutex *sampleBufferMutex;
-  QFile audioFile;
   SpeexBits bits;
   SpeexHeader header;
   int nframes;
@@ -66,6 +63,7 @@ public:
   spx_int32_t abr_enabled;
   spx_int32_t vad_enabled;
   spx_int32_t dtx_enabled;
+  int enh_enabled;
   int nbBytes;
   int print_bitrate;
   spx_int32_t rate;
@@ -95,6 +93,7 @@ private:
     abr_enabled = false;
     vad_enabled = false;
     dtx_enabled = false;
+    enh_enabled = false;
     print_bitrate = 0;
     modeID = SPEEX_MODEID_WB;
     mode = speex_lib_get_mode(modeID);
@@ -112,76 +111,28 @@ private:
     bitrate = 0;
     complexity = 3;
     nframes = 1;
-    speex_init_header(&header, rate, 1, mode);
-    header.frames_per_packet = nframes;
-    header.vbr = vbr_enabled;
-    header.nb_channels = chan;
-    speex_encoder_ctl(st, SPEEX_GET_FRAME_SIZE, &frame_size);
-    speex_encoder_ctl(st, SPEEX_SET_COMPLEXITY, &complexity);
-    speex_encoder_ctl(st, SPEEX_SET_SAMPLING_RATE, &rate);
-    if (quality >= 0) {
-      if (vbr_enabled) {
-        if (vbr_max > 0) {
-          speex_encoder_ctl(st, SPEEX_SET_VBR_MAX_BITRATE, &vbr_max);
-        }
-        speex_encoder_ctl(st, SPEEX_SET_VBR_QUALITY, &vbr_quality);
-      }
-      else {
-        speex_encoder_ctl(st, SPEEX_SET_QUALITY, &quality);
-      }
-    }
-    if (bitrate) {
-      if (quality >= 0 && vbr_enabled)
-        fprintf (stderr, "Warning: --bitrate option is overriding --quality\n");
-      speex_encoder_ctl(st, SPEEX_SET_BITRATE, &bitrate);
-    }
-    if (vbr_enabled) {
-      tmp = 1;
-      speex_encoder_ctl(st, SPEEX_SET_VBR, &tmp);
-    }
-    else if (vad_enabled) {
-      tmp = 1;
-      speex_encoder_ctl(st, SPEEX_SET_VAD, &tmp);
-    }
-    if (dtx_enabled) {
-      speex_encoder_ctl(st, SPEEX_SET_DTX, &tmp);
-    }
-    if (dtx_enabled && !(vbr_enabled || abr_enabled || vad_enabled)) {
-      qWarning() << "Warning: --dtx is useless without --vad, --vbr or --abr";
-    }
-    else if ((vbr_enabled || abr_enabled) && (vad_enabled)) {
-      qWarning() << "Warning: --vad is already implied by --vbr or --abr";
-    }
-    if (abr_enabled) {
-       speex_encoder_ctl(st, SPEEX_SET_ABR, &abr_enabled);
-    }
-    speex_encoder_ctl(st, SPEEX_SET_HIGHPASS, &highpass_enabled);
-    speex_encoder_ctl(st, SPEEX_GET_LOOKAHEAD, &lookahead);
     speex_bits_init(&bits);
   }
 
   void deinit_speex(void)
   {
-    speex_encoder_destroy(st);
+    speex_decoder_destroy(st);
     speex_bits_destroy(&bits);
   }
 };
 
 
-AudioDecoder::AudioDecoder(const QAudioFormat &format, QMutex *mutex, QObject *parent)
+AudioDecoder::AudioDecoder(QMutex *mutex, QObject *parent)
   : QIODevice(parent)
-  , d_ptr(new AudioDecoderPrivate(format, mutex))
+  , d_ptr(new AudioDecoderPrivate(mutex))
 {
-  Q_D(AudioDecoder);
-  d->audioFile.setFileName("D:\\Temp\\mic.spx");
-  d->audioFile.open(QIODevice::WriteOnly | QIODevice::Truncate);
+  // Q_D(AudioDecoder);
 }
 
 
 AudioDecoder::~AudioDecoder()
 {
-  Q_D(AudioDecoder);
-  d->audioFile.close();
+  // Q_D(AudioDecoder);
   stop();
 }
 

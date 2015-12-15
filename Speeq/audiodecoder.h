@@ -36,7 +36,7 @@ class AudioDecoder : public QIODevice
   Q_OBJECT
 
 public:
-  AudioDecoder(const QAudioFormat &format, QMutex *mutex, QObject *parent);
+  AudioDecoder(QMutex *mutex, QObject *parent);
   ~AudioDecoder();
 
   void start(void);
