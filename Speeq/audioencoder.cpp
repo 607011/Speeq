@@ -87,26 +87,25 @@ public:
 private:
   void init_speex(void)
   {
-
     speex_lib_ctl(SPEEX_LIB_GET_VERSION_STRING, (void*)&speex_version);
     qDebug() << speex_version;
     nb_samples = 0;
     total_samples = 0;
     nb_encoded = 0;
-    vbr_max = 0;
     vbr_enabled = true;
+    vbr_quality = -1;
+    vbr_max = 0;
     abr_enabled = false;
     vad_enabled = false;
     dtx_enabled = false;
     print_bitrate = 0;
-    modeID = SPEEX_MODEID_WB;
+    modeID = SPEEX_MODEID_NB;
     mode = speex_lib_get_mode(modeID);
     st = speex_encoder_init(mode);
     rate = 8000;
     chan = 1;
     fmt = 16;
     quality = -1;
-    vbr_quality = -1;
     lsb = 1;
     tmp = 1;
     highpass_enabled = true;
@@ -165,8 +164,8 @@ private:
 
   void deinit_speex(void)
   {
-    speex_encoder_destroy(st);
     speex_bits_destroy(&bits);
+    speex_encoder_destroy(st);
   }
 };
 
@@ -341,14 +340,15 @@ qint64 AudioEncoder::writeData(const char *data, qint64 len)
     maxValue = qMin(maxValue, d->maxAmplitude);
     d->level = qreal(maxValue) / d->maxAmplitude;
 
+    speex_bits_reset(&d->bits);
     speex_encode_int(d->st, (spx_int16_t*)data, &d->bits);
+    int blockSize = speex_bits_nbytes(&d->bits);
     int tmp;
     speex_encoder_ctl(d->st, SPEEX_GET_BITRATE, &tmp);
-    qDebug() << "bitrate:" << tmp << "bps";
+    qDebug().nospace() << "bitrate: " << tmp << "bps, blockSize = " << blockSize;
     if (d->audioFile.isOpen()) {
-      speex_bits_insert_terminator(&d->bits);
+      // speex_bits_insert_terminator(&d->bits);
       d->nbBytes = speex_bits_write(&d->bits, d->cbits, MAX_FRAME_BYTES);
-      speex_bits_reset(&d->bits);
       d->audioFile.write(d->cbits,  d->nbBytes);
     }
   }
