@@ -1,11 +1,11 @@
 # Speeq
 
-*Push-to-talk client and server based on Speex codec.*
+**Push-to-talk client and server based on Speex codec**
+
+This software is under development and does not do anything sensible at the moment.
 
 
-
-
-# Copyright
+## Copyright
 
 Copyright (c) 2015 Oliver Lau <<oliver@ersatzworld.net>>
 
