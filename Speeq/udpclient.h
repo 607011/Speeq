@@ -17,39 +17,33 @@
 
 */
 
-#ifndef __TCPCLIENT_H_
-#define __TCPCLIENT_H_
+#ifndef __UDPCLIENT_H_
+#define __UDPCLIENT_H_
 
 #include <QObject>
 #include <QScopedPointer>
-#include <QByteArray>
-#include <QTcpSocket>
-#include <QHostAddress>
 
-class TcpClientPrivate;
+class UdpClientPrivate;
 
-class TcpClient : public QObject
+class UdpClient : public QObject
 {
   Q_OBJECT
 public:
-  explicit TcpClient(QObject *parent = Q_NULLPTR);
-  ~TcpClient();
-  void connect(const QHostAddress &host, quint16 port);
+  explicit UdpClient(QObject *parent = Q_NULLPTR);
+  ~UdpClient();
 
 private slots:
-  void forwardIncomingMessage(void);
 
 signals:
-  void receivedData(QByteArray);
 
 public slots:
 
 private:
-  static const int Port = 53548;
+  static const int DefaultPort = 53548;
 
-  QScopedPointer<TcpClientPrivate> d_ptr;
-  Q_DECLARE_PRIVATE(TcpClient)
-  Q_DISABLE_COPY(TcpClient)
+  QScopedPointer<UdpClientPrivate> d_ptr;
+  Q_DECLARE_PRIVATE(UdpClient)
+  Q_DISABLE_COPY(UdpClient)
 };
 
-#endif // __TCPCLIENT_H_
+#endif // __UDPCLIENT_H_

@@ -31,8 +31,8 @@ SOURCES += main.cpp\
     volumerenderarea.cpp \
     waverenderarea.cpp \
     audioencoder.cpp \
-    tcpclient.cpp \
-    audiodecoder.cpp
+    audiodecoder.cpp \
+    udpclient.cpp
 
 HEADERS  += mainwindow.h \
     global.h \
@@ -40,8 +40,8 @@ HEADERS  += mainwindow.h \
     volumerenderarea.h \
     waverenderarea.h \
     audioencoder.h \
-    tcpclient.h \
-    audiodecoder.h
+    audiodecoder.h \
+    udpclient.h
 
 FORMS    += mainwindow.ui
 
