@@ -25,7 +25,6 @@
 #include <QVector>
 
 #include <speex/speex.h>
-#include <speex/speex_header.h>
 
 static const int MAX_FRAME_SIZE = 2000;
 static const int MAX_FRAME_BYTES = 2000;
@@ -46,7 +45,6 @@ public:
   SampleBufferType sampleBuffer;
   QMutex *sampleBufferMutex;
   SpeexBits bits;
-  SpeexHeader header;
   int nframes;
   int nb_samples;
   int total_samples;
