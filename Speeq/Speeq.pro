@@ -49,6 +49,10 @@ DISTFILES += \
     Speeq.rc \
     ../README.md
 
+RESOURCES += \
+    speeq.qrc
+
+
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../libspeex/release/ -lspeex
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../libspeex/debug/ -lspeex
 else:unix: LIBS += -L$$OUT_PWD/../libspeex/ -lspeex
@@ -62,5 +66,15 @@ else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PW
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../libspeex/debug/speex.lib
 else:unix: PRE_TARGETDEPS += $$OUT_PWD/../libspeex/libspeex.a
 
-RESOURCES += \
-    speeq.qrc
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../libspeexdsp/release/ -lspeexdsp
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../libspeexdsp/debug/ -lspeexdsp
+else:unix: LIBS += -L$$OUT_PWD/../libspeexdsp/ -lspeexdsp
+
+INCLUDEPATH += $$PWD/../libspeexdsp
+DEPENDPATH += $$PWD/../libspeexdsp
+
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../libspeexdsp/release/libspeexdsp.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../libspeexdsp/debug/libspeexdsp.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../libspeexdsp/release/speexdsp.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../libspeexdsp/debug/speexdsp.lib
+else:unix: PRE_TARGETDEPS += $$OUT_PWD/../libspeexdsp/libspeexdsp.a
