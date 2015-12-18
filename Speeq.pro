@@ -20,6 +20,7 @@ TEMPLATE = subdirs
 CONFIG += ordered
 SUBDIRS += \
     libspeex \
+    libspeexdsp \
     Speeq
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/libspeex/release/ -lspeex
