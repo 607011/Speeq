@@ -36,15 +36,15 @@ class AudioDecoder : public QIODevice
   Q_OBJECT
 
 public:
-  AudioDecoder(QMutex *mutex, QObject *parent);
+  AudioDecoder(const QAudioFormat &format, QMutex *mutex, QObject *parent);
   ~AudioDecoder();
 
   void start(void);
   void stop(void);
 
-  qreal level(void) const;
   const SampleBufferType &sampleBuffer(void) const;
 
+protected:
   qint64 readData(char *data, qint64 maxlen);
   qint64 writeData(const char *data, qint64 len);
 
@@ -53,9 +53,6 @@ private:
   Q_DECLARE_PRIVATE(AudioDecoder)
   Q_DISABLE_COPY(AudioDecoder)
 
-
-signals:
-  void update(void);
 };
 
 #endif // __AUDIODECODER_H_

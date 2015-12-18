@@ -22,6 +22,7 @@
 #include "volumerenderarea.h"
 #include "waverenderarea.h"
 #include "audioencoder.h"
+#include "audiodecoder.h"
 #include "global.h"
 
 #include <QDebug>
@@ -47,7 +48,7 @@ public:
     , stopIcon(":/images/stop.png")
     , audioDeviceInfo(QAudioDeviceInfo::defaultInputDevice())
     , audio(Q_NULLPTR)
-    , audioInput(Q_NULLPTR)
+    , encoder(Q_NULLPTR)
     , volumeRenderArea(Q_NULLPTR)
     , waveRenderArea(Q_NULLPTR)
     , sampleBufferMutex(new QMutex)
@@ -77,7 +78,8 @@ public:
   QAudioDeviceInfo audioDeviceInfo;
   QAudioFormat audioFormat;
   QAudioInput *audio;
-  AudioEncoder *audioInput;
+  AudioEncoder *encoder;
+  AudioDecoder *decoder;
   VolumeRenderArea *volumeRenderArea;
   WaveRenderArea *waveRenderArea;
   QMutex *sampleBufferMutex;
@@ -97,8 +99,8 @@ MainWindow::MainWindow(QWidget *parent)
   d->volumeRenderArea = new VolumeRenderArea;
   d->waveRenderArea = new WaveRenderArea(d->sampleBufferMutex);
   d->waveRenderArea->setAudioFormat(d->audioFormat);
-  d->audioInput  = new AudioEncoder(d->audioFormat, d->sampleBufferMutex, this);
-  QObject::connect(d->audioInput, SIGNAL(update()), SLOT(refreshDisplay()));
+  d->encoder = new AudioEncoder(d->audioFormat, d->sampleBufferMutex, this);
+  QObject::connect(d->encoder, SIGNAL(update()), SLOT(refreshDisplay()));
   QObject::connect(ui->startStopButton, SIGNAL(clicked(bool)), SLOT(startStop()));
   QObject::connect(ui->volumeSlider, SIGNAL(valueChanged(int)), SLOT(onVolumeSliderChanged(int)));
   d->audio = new QAudioInput(d->audioDeviceInfo, d->audioFormat, this);
@@ -112,8 +114,13 @@ MainWindow::MainWindow(QWidget *parent)
   }
 
   restoreSettings();
-  d->audioInput->start();
-  d->audio->start(d->audioInput);
+  d->decoder = new AudioDecoder(d->audioFormat, d->sampleBufferMutex, this);
+  d->decoder->start();
+  QByteArray spx = d->decoder->readAll();
+  qDebug() << "spx.length() =" << spx.length();
+
+  d->encoder->start();
+  d->audio->start(d->encoder);
   if (!d->paused) {
     start();
   }
@@ -124,7 +131,7 @@ MainWindow::~MainWindow()
 {
   Q_D(MainWindow);
   d->audio->stop();
-  d->audioInput->stop();
+  d->encoder->stop();
   delete ui;
 }
 
@@ -157,8 +164,8 @@ void MainWindow::refreshDisplay(void)
 {
   Q_D(MainWindow);
   if (!d->paused) {
-    d->volumeRenderArea->setLevel(d->audioInput->level());
-    d->waveRenderArea->setData(d->audioInput->sampleBuffer());
+    d->volumeRenderArea->setLevel(d->encoder->level());
+    d->waveRenderArea->setData(d->encoder->sampleBuffer());
   }
 }
 

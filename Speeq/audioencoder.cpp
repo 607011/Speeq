@@ -349,11 +349,12 @@ qint64 AudioEncoder::writeData(const char *data, qint64 len)
     if (d->audioFile.isOpen()) {
       // speex_bits_insert_terminator(&d->bits);
       d->nbBytes = speex_bits_write(&d->bits, d->cbits, MAX_FRAME_BYTES);
-      d->audioFile.write(d->cbits,  d->nbBytes);
+      QByteArray data = QByteArray(d->cbits,  d->nbBytes);
+      d->audioFile.write(data);
+      emit dataReady(data);
     }
   }
   d->sampleBufferMutex->unlock();
 
-  emit update();
   return len;
 }

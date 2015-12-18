@@ -22,7 +22,6 @@
 #include <QDebug>
 #include <QtEndian>
 #include <QFile>
-#include <QVector>
 
 #include <speex/speex.h>
 
@@ -31,8 +30,8 @@ static const int MAX_FRAME_BYTES = 2000;
 
 class AudioDecoderPrivate {
 public:
-  AudioDecoderPrivate(QMutex *mutex)
-    : level(0.0)
+  AudioDecoderPrivate(const QAudioFormat &format, QMutex *mutex)
+    : format(format)
     , sampleBufferMutex(mutex)
   {
     init_speex();
@@ -41,75 +40,26 @@ public:
   {
     deinit_speex();
   }
-  qreal level;
+  const QAudioFormat format;
   SampleBufferType sampleBuffer;
   QMutex *sampleBufferMutex;
+  QFile audioFile;
   SpeexBits bits;
-  int nframes;
-  int nb_samples;
-  int total_samples;
-  int nb_encoded;
   spx_int32_t complexity;
   const SpeexMode *mode;
   void *st;
   int modeID;
   short input[MAX_FRAME_SIZE];
   char cbits[MAX_FRAME_BYTES];
-  spx_int32_t frame_size;
-  spx_int32_t vbr_enabled;
-  spx_int32_t vbr_max;
-  spx_int32_t abr_enabled;
-  spx_int32_t vad_enabled;
-  spx_int32_t dtx_enabled;
-  int enh_enabled;
-  int nbBytes;
-  int print_bitrate;
-  spx_int32_t rate;
-  spx_int32_t size;
-  int chan;
-  int fmt;
-  spx_int32_t quality;
-  float vbr_quality;
-  int lsb;
-  spx_int32_t tmp;
-  spx_int32_t highpass_enabled;
-  int output_rate;
-  spx_int32_t lookahead;
-  spx_int32_t bitrate;
   const char* speex_version;
 
 private:
   void init_speex(void)
   {
-    speex_lib_ctl(SPEEX_LIB_GET_VERSION_STRING, (void*)&speex_version);
-    qDebug() << speex_version;
-    nb_samples = 0;
-    total_samples = 0;
-    nb_encoded = 0;
-    vbr_max = 0;
-    vbr_enabled = true;
-    abr_enabled = false;
-    vad_enabled = false;
-    dtx_enabled = false;
-    enh_enabled = false;
-    print_bitrate = 0;
-    modeID = SPEEX_MODEID_WB;
-    mode = speex_lib_get_mode(modeID);
-    st = speex_encoder_init(mode);
-    rate = 8000;
-    chan = 1;
-    fmt = 16;
-    quality = -1;
-    vbr_quality = -1;
-    lsb = 1;
-    tmp = 1;
-    highpass_enabled = true;
-    output_rate = 0;
-    lookahead = 0;
-    bitrate = 0;
-    complexity = 3;
-    nframes = 1;
     speex_bits_init(&bits);
+    modeID = SPEEX_MODEID_NB;
+    mode = speex_lib_get_mode(modeID);
+    st = speex_decoder_init(mode);
   }
 
   void deinit_speex(void)
@@ -120,11 +70,13 @@ private:
 };
 
 
-AudioDecoder::AudioDecoder(QMutex *mutex, QObject *parent)
+AudioDecoder::AudioDecoder(const QAudioFormat &format, QMutex *mutex, QObject *parent)
   : QIODevice(parent)
-  , d_ptr(new AudioDecoderPrivate(mutex))
+  , d_ptr(new AudioDecoderPrivate(format, mutex))
 {
-  // Q_D(AudioDecoder);
+  Q_D(AudioDecoder);
+  d->audioFile.setFileName("D:\\Temp\\ready.spx");
+  d->audioFile.open(QIODevice::WriteOnly | QIODevice::Truncate);
 }
 
 
@@ -137,19 +89,13 @@ AudioDecoder::~AudioDecoder()
 
 void AudioDecoder::start(void)
 {
-  open(QIODevice::WriteOnly);
+  open(QIODevice::ReadOnly);
 }
 
 
 void AudioDecoder::stop(void)
 {
   close();
-}
-
-
-qreal AudioDecoder::level(void) const
-{
-  return d_ptr->level;
 }
 
 
@@ -163,7 +109,8 @@ qint64 AudioDecoder::readData(char *data, qint64 maxlen)
 {
   Q_UNUSED(data)
   Q_UNUSED(maxlen)
-  return 0;
+  qDebug() << "AudioDecoder::readData(..., " << maxlen << ")";
+  return maxlen;
 }
 
 

@@ -25,6 +25,7 @@
 #include <QIODevice>
 #include <QAudioFormat>
 #include <QScopedPointer>
+#include <QByteArray>
 #include <QMutex>
 #include "global.h"
 
@@ -46,10 +47,11 @@ public:
   int maxAmplitude(void) const;
   const SampleBufferType &sampleBuffer(void) const;
 
+  static int maxAmplitudeForFormat(const QAudioFormat &format);
+
+protected:
   qint64 readData(char *data, qint64 maxlen);
   qint64 writeData(const char *data, qint64 len);
-
-  static int maxAmplitudeForFormat(const QAudioFormat &format);
 
 private:
   QScopedPointer<AudioEncoderPrivate> d_ptr;
@@ -58,7 +60,7 @@ private:
 
 
 signals:
-  void update(void);
+  void dataReady(QByteArray);
 };
 
 #endif // __AUDIOENCODER_H_
